@@ -21,24 +21,24 @@ class FlaskrTestCase(unittest.TestCase):
     # MyObject tests
 
     def test_posting_myobject(self):
-      response = self.app.post('/myobject/', 
+      response = self.app.post('/myobject/',
         data=json.dumps(dict(
           name="A object"
-        )), 
+        )),
         content_type = 'application/json')
-      
+
       responseJSON = json.loads(response.data.decode())
 
       self.assertEqual(response.status_code, 200)
       assert 'application/json' in response.content_type
       assert 'A object' in responseJSON["name"]
 
-  
+
     def test_getting_object(self):
-      response = self.app.post('/myobject/', 
+      response = self.app.post('/myobject/',
         data=json.dumps(dict(
           name="Another object"
-        )), 
+        )),
         content_type = 'application/json')
 
       postResponseJSON = json.loads(response.data.decode())
@@ -54,5 +54,52 @@ class FlaskrTestCase(unittest.TestCase):
       response = self.app.get('/myobject/55f0cbb4236f44b7f0e3cb23')
       self.assertEqual(response.status_code, 404)
 
+
+# Note: implement test for put method
+    def test_putting_object(self):
+        response = self.app.post('/myobject/',
+            data=json.dumps(dict(
+                name="Another object"
+            )),
+            content_type = 'application/json')
+
+        postResponseJSON = json.loads(response.data.decode())
+        postedObjectID = postResponseJSON["_id"]
+
+        response = self.app.put('/myobject/'+postedObjectID,
+            data=json.dumps(dict(name="Another colored object")),
+            content_type='application/json')
+        responseJSON = json.loads(response.data.decode())
+
+        self.assertEqual(response.status_code, 200)
+        assert 'Another colored object' in responseJSON["name"]
+
+    def test_putting_non_existent_object(self):
+      response = self.app.get('/myobject/55f0cbb4236f44b7f0e3cb23')
+      self.assertEqual(response.status_code, 404)
+
+
+    # def test_deleting_object(self):
+    #   response = self.app.post('/myobject/',
+    #     data=json.dumps(dict(
+    #       name="Another object"
+    #     )),
+    #     content_type = 'application/json')
+    #
+    #   postResponseJSON = json.loads(response.data.decode())
+    #   postedObjectID = postResponseJSON["_id"]
+    #
+    #   response = self.app.delete('/myobject/'+postedObjectID)
+    #   responseJSON = json.loads(response.data.decode())
+    #
+    #   self.assertEqual(response.status_code, 200)
+    #   assert 'Another object' in responseJSON["name"]
+    #
+    # def test_deleting_non_existent_object(self):
+    #   response = self.app.get('/myobject/55f0cbb4236f44b7f0e3cb23')
+    #   self.assertEqual(response.status_code, 404)
+
+
 if __name__ == '__main__':
     unittest.main()
+    # test_posting_myobject()

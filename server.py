@@ -10,28 +10,62 @@ mongo = MongoClient('localhost', 27017)
 app.db = mongo.develop_database
 api = Api(app)
 
-#Implement REST Resource
+
+# Implement REST Resource
 class MyObject(Resource):
 
     def post(self):
-      new_myobject = request.json
-      myobject_collection = app.db.myobjects
-      result = myobject_collection.insert_one(request.json)
+        new_myobject = request.json
+        myobject_collection = app.db.myobjects
+        result = myobject_collection.insert_one(request.json)
 
-      myobject = myobject_collection.find_one({"_id": ObjectId(result.inserted_id)})
+        myobject = myobject_collection.find_one({"_id": ObjectId(result.inserted_id)})
 
-      return myobject
+        return myobject
 
     def get(self, myobject_id):
-      myobject_collection = app.db.myobjects
-      myobject = myobject_collection.find_one({"_id": ObjectId(myobject_id)})
+        myobject_collection = app.db.myobjects
+        myobject = myobject_collection.find_one({"_id": ObjectId(myobject_id)})
+        # print(type(myobject), myobject)
 
-      if myobject is None:
-        response = jsonify(data=[])
-        response.status_code = 404
-        return response
-      else:
-        return myobject
+        if myobject is None:
+            response = jsonify(data=[])
+            response.status_code = 404
+            return response
+        else:
+            return myobject
+
+    # Note: implement put method
+    def put(self, myobject_id):
+        myobject_collection = app.db.myobjects
+        myobject = myobject_collection.update_one({"_id": ObjectId(myobject_id)}, {"$set": request.json})
+        print(type(myobject), myobject)
+        myobject = myobject_collection.find_one({"_id": ObjectId(myobject_id)})
+        print(type(myobject), myobject)
+
+        if myobject is None:
+            response = jsonify(data=[])
+            response.status_code = 404
+            return response
+        else:
+            return myobject
+
+    # Note: implement delete method
+    # def delete(self, myobject_id):
+    #     myobject_collection = app.db.myobjects
+    #     myobject = myobject_collection.delete_one({"_id": ObjectId(myobject_id)})
+    #
+    #     if myobject is None:
+    #         response = jsonify(data=[])
+    #         response.status_code = 404
+    #         return response
+    #     else:
+    #         return myobject
+
+    # Note: implement specific trip via its ID
+
+
+    # Note: Implement all trips via a specific user
 
 # Add REST resource to API
 api.add_resource(MyObject, '/myobject/','/myobject/<string:myobject_id>')
