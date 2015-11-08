@@ -21,30 +21,26 @@ class User(Resource):
         user = user_collection.find_one({"_id": ObjectId(result.inserted_id)})
         return user
 
-
 # Implement REST Resource
-class MyObject(Resource):
+class Trip(Resource):
 
     def post(self):
-        new_myobject = request.json
-        myobject_collection = app.db.myobjects
-        result = myobject_collection.insert_one(request.json)
-
-        myobject = myobject_collection.find_one({"_id": ObjectId(result.inserted_id)})
-
-        return myobject
+        new_trip = request.json
+        trip_collection = app.db.trips
+        result = trip_collection.insert_one(new_trip)
+        trip = trip_collection.find_one({"_id": ObjectId(result.inserted_id)})
+        return trip
 
     # Note: implement specific trip via its ID
-    def get(self, myobject_id):
-        myobject_collection = app.db.myobjects
-        myobject = myobject_collection.find_one({"_id": ObjectId(myobject_id)})
-        # print(type(myobject), myobject)
-        if myobject is None:
+    def get(self, trip_id):
+        trip_collection = app.db.trips
+        trip = trip_collection.find_one({"_id": ObjectId(trip_id)})
+        if trip is None:
             response = jsonify(data=[])
             response.status_code = 404
             return response
         else:
-            return myobject
+            return trip
 
 
 
@@ -52,26 +48,24 @@ class MyObject(Resource):
 
 
     # Note: implement put method
-    def put(self, myobject_id):
-        myobject_collection = app.db.myobjects
-        myobject = myobject_collection.update_one({"_id": ObjectId(myobject_id)}, {"$set": request.json})
-        # print(type(myobject), myobject)
-        myobject = myobject_collection.find_one({"_id": ObjectId(myobject_id)})
-        # print(type(myobject), myobject)
+    def put(self, trip_id):
+        trip_collection = app.db.trips
+        trip = trip_collection.update_one({"_id": ObjectId(trip_id)}, {"$set": request.json})
+        trip = trip_collection.find_one({"_id": ObjectId(trip_id)})
 
-        if myobject is None:
+        if trip is None:
             response = jsonify(data=[])
             response.status_code = 404
             return response
         else:
-            return myobject
+            return trip
 
     # Note: implement delete method
-    def delete(self, myobject_id):
-        myobject_collection = app.db.myobjects
-        myobject = myobject_collection.delete_one({"_id": ObjectId(myobject_id)})
-        myobject = myobject_collection.find_one({"_id": ObjectId(myobject_id)})
-        return {"objectIdentifier": myobject_id}
+    def delete(self, trip_id):
+        trip_collection = app.db.trips
+        trip = trip_collection.delete_one({"_id": ObjectId(trip_id)})
+        trip = trip_collection.find_one({"_id": ObjectId(trip_id)})
+        return {"objectIdentifier": trip_id}
         # if myobject is None:
         #     response = jsonify(data=[])
         #     response.status_code = 404
@@ -80,8 +74,8 @@ class MyObject(Resource):
         #     return myobject
 
 # Add REST resource to API
-api.add_resource(MyObject, '/myobject/','/myobject/<string:myobject_id>')
-api.add_resource(User, '/users/', '/users/<string:user_id>')
+api.add_resource(Trip, '/trip/','/trip/<string:trip_id>')
+api.add_resource(User, '/user/')
 
 # provide a custom JSON serializer for flaks_restful
 @api.representation('application/json')

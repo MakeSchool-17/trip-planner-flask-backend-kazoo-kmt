@@ -20,7 +20,7 @@ class FlaskrTestCase(unittest.TestCase):
 
     # User tests
     def test_posting_username_and_password(self):
-        response = self.app.post('/users/',
+        response = self.app.post('/user/',
                                 data=json.dumps(dict(
                                     username="Kazu",
                                     password="test"
@@ -31,11 +31,11 @@ class FlaskrTestCase(unittest.TestCase):
         assert "Kazu" in responseJSON["username"]
         assert "test" in responseJSON["password"]
 
-    # MyObject tests
-    def test_posting_myobject(self):
-      response = self.app.post('/myobject/',
+    # Trip tests
+    def test_posting_trip(self):
+      response = self.app.post('/trip/',
         data=json.dumps(dict(
-          name="A object"
+          name="Stuttgart Roadtrip"
         )),
         content_type='application/json')
 
@@ -43,71 +43,67 @@ class FlaskrTestCase(unittest.TestCase):
 
       self.assertEqual(response.status_code, 200)
       assert 'application/json' in response.content_type
-      assert 'A object' in responseJSON["name"]
+      assert 'Stuttgart Roadtrip' in responseJSON["name"]
 
 
-    def test_getting_object(self):
-      response = self.app.post('/myobject/',
+    def test_getting_trip(self):
+      response = self.app.post('/trip/',
         data=json.dumps(dict(
-          name="Another object"
+          name="Stuttgart Roadtrip"
         )),
         content_type = 'application/json')
 
       postResponseJSON = json.loads(response.data.decode())
       postedObjectID = postResponseJSON["_id"]
 
-      response = self.app.get('/myobject/'+postedObjectID)
+      response = self.app.get('/trip/'+postedObjectID)
       responseJSON = json.loads(response.data.decode())
 
       self.assertEqual(response.status_code, 200)
-      assert 'Another object' in responseJSON["name"]
-
-    def test_getting_non_existent_object(self):
-      response = self.app.get('/myobject/55f0cbb4236f44b7f0e3cb23')
-      self.assertEqual(response.status_code, 404)
-
+      assert 'Stuttgart Roadtrip' in responseJSON["name"]
+#     def test_getting_non_existent_object(self):
+#       response = self.app.get('/myobject/55f0cbb4236f44b7f0e3cb23')
+#       self.assertEqual(response.status_code, 404)
 
 # Note: implement test for put method
     def test_putting_object(self):
-        response = self.app.post('/myobject/',
+        response = self.app.post('/trip/',
             data=json.dumps(dict(
-                name="Another object"
+                name="Stuttgart Roadtrip"
             )),
             content_type = 'application/json')
 
         postResponseJSON = json.loads(response.data.decode())
         postedObjectID = postResponseJSON["_id"]
 
-        response = self.app.put('/myobject/'+postedObjectID,
-            data=json.dumps(dict(name="Another colored object")),
+        response = self.app.put('/trip/'+postedObjectID,
+            data=json.dumps(dict(name="San Francisco Roadtrip")),
             content_type='application/json')
         responseJSON = json.loads(response.data.decode())
 
         self.assertEqual(response.status_code, 200)
-        assert 'Another colored object' in responseJSON["name"]
+        assert 'San Francisco Roadtrip' in responseJSON["name"]
+#     def test_putting_non_existent_object(self):
+#       response = self.app.get('/myobject/55f0cbb4236f44b7f0e3cb23')
+#       self.assertEqual(response.status_code, 404)
 
-    def test_putting_non_existent_object(self):
-      response = self.app.get('/myobject/55f0cbb4236f44b7f0e3cb23')
-      self.assertEqual(response.status_code, 404)
-
-
-    def test_deleting_object(self):
-      response = self.app.post('/myobject/',
+    def test_deleting_trip(self):
+      response = self.app.post('/trip/',
         data=json.dumps(dict(
-          name="Another object"
+          name="Stuttgart Roadtrip"
         )),
         content_type='application/json')
 
       postResponseJSON = json.loads(response.data.decode())
       postedObjectID = postResponseJSON["_id"]
 
-      response = self.app.delete('/myobject/'+postedObjectID)
+      response = self.app.delete('/trip/'+postedObjectID)
       responseJSON = json.loads(response.data.decode())
 
       self.assertEqual(response.status_code, 200)
       assert postedObjectID in responseJSON["objectIdentifier"]
 
-      responseGet = self.app.get(('/myobject/'+postedObjectID))
+      responseGet = self.app.get(('/trip/'+postedObjectID))
       self.assertEqual(responseGet.status_code, 404)
     #   assert 'Another object' not in responseJSON["name"]
     #
