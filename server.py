@@ -10,6 +10,17 @@ mongo = MongoClient('localhost', 27017)
 app.db = mongo.develop_database
 api = Api(app)
 
+class User(Resource):
+
+# Provide an endpoint that allows a client to register a new user by providing username and password
+    def post(self):
+        new_user = request.json
+        # print(new_user)
+        user_collection = app.db.users
+        result = user_collection.insert_one(new_user)
+        user = user_collection.find_one({"_id": ObjectId(result.inserted_id)})
+        return user
+
 
 # Implement REST Resource
 class MyObject(Resource):
@@ -70,6 +81,7 @@ class MyObject(Resource):
 
 # Add REST resource to API
 api.add_resource(MyObject, '/myobject/','/myobject/<string:myobject_id>')
+api.add_resource(User, '/users/', '/users/<string:user_id>')
 
 # provide a custom JSON serializer for flaks_restful
 @api.representation('application/json')

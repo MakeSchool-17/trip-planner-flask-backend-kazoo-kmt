@@ -18,14 +18,26 @@ class FlaskrTestCase(unittest.TestCase):
       # Drop collection (significantly faster than dropping entire db)
       db.drop_collection('myobjects')
 
-    # MyObject tests
+    # User tests
+    def test_posting_username_and_password(self):
+        response = self.app.post('/users/',
+                                data=json.dumps(dict(
+                                    username="Kazu",
+                                    password="test"
+                                )),
+                                content_type='application/json')
+        responseJSON = json.loads(response.data.decode())
+        self.assertEqual(response.status_code, 200)
+        assert "Kazu" in responseJSON["username"]
+        assert "test" in responseJSON["password"]
 
+    # MyObject tests
     def test_posting_myobject(self):
       response = self.app.post('/myobject/',
         data=json.dumps(dict(
           name="A object"
         )),
-        content_type = 'application/json')
+        content_type='application/json')
 
       responseJSON = json.loads(response.data.decode())
 
