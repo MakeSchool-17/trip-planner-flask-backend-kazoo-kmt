@@ -23,8 +23,28 @@ class MyObject(Resource):
 
         return myobject
 
+    # Note: implement specific trip via its ID
     def get(self, myobject_id):
         myobject_collection = app.db.myobjects
+        myobject = myobject_collection.find_one({"_id": ObjectId(myobject_id)})
+        # print(type(myobject), myobject)
+        if myobject is None:
+            response = jsonify(data=[])
+            response.status_code = 404
+            return response
+        else:
+            return myobject
+
+
+
+    # Note: Implement all trips via a specific user
+
+
+    # Note: implement put method
+    def put(self, myobject_id):
+        myobject_collection = app.db.myobjects
+        myobject = myobject_collection.update_one({"_id": ObjectId(myobject_id)}, {"$set": request.json})
+        # print(type(myobject), myobject)
         myobject = myobject_collection.find_one({"_id": ObjectId(myobject_id)})
         # print(type(myobject), myobject)
 
@@ -35,37 +55,18 @@ class MyObject(Resource):
         else:
             return myobject
 
-    # Note: implement put method
-    def put(self, myobject_id):
-        myobject_collection = app.db.myobjects
-        myobject = myobject_collection.update_one({"_id": ObjectId(myobject_id)}, {"$set": request.json})
-        print(type(myobject), myobject)
-        myobject = myobject_collection.find_one({"_id": ObjectId(myobject_id)})
-        print(type(myobject), myobject)
-
-        if myobject is None:
-            response = jsonify(data=[])
-            response.status_code = 404
-            return response
-        else:
-            return myobject
-
     # Note: implement delete method
-    # def delete(self, myobject_id):
-    #     myobject_collection = app.db.myobjects
-    #     myobject = myobject_collection.delete_one({"_id": ObjectId(myobject_id)})
-    #
-    #     if myobject is None:
-    #         response = jsonify(data=[])
-    #         response.status_code = 404
-    #         return response
-    #     else:
-    #         return myobject
-
-    # Note: implement specific trip via its ID
-
-
-    # Note: Implement all trips via a specific user
+    def delete(self, myobject_id):
+        myobject_collection = app.db.myobjects
+        myobject = myobject_collection.delete_one({"_id": ObjectId(myobject_id)})
+        myobject = myobject_collection.find_one({"_id": ObjectId(myobject_id)})
+        return {"objectIdentifier": myobject_id}
+        # if myobject is None:
+        #     response = jsonify(data=[])
+        #     response.status_code = 404
+        #     return response
+        # else:
+        #     return myobject
 
 # Add REST resource to API
 api.add_resource(MyObject, '/myobject/','/myobject/<string:myobject_id>')
